@@ -268,8 +268,9 @@ def apply_defaults(grouped_tasks: Grouped, defaults_map: dict[str, str]) -> None
     This mutates `grouped_tasks` in-place.
     """
     for description, value in defaults_map.items():
-        if description in grouped_tasks:
-            grouped_tasks[description]["task_id"] = value
+        for key in grouped_tasks:
+            if key.startswith(description):
+                grouped_tasks[key]["task_id"] = value
 
 
 def compute_totals(tasks_results: list[TaskResult]) -> tuple[int, int]:

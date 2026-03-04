@@ -11,3 +11,4 @@ wheels/
 .venv
 secrets.py
 uv.lock
+logtime/config.py
