@@ -60,7 +60,7 @@ already parsed
 7. Finally you will be prompted with
 `Send on api? (y/n):`
 For redmine report to work, you also need to set environment variables LOGTIME_REDMINE_API_KEY and LOGTIME_REDMINE_URL first.
-
+Alternatively you can put values directly in your config.py, but nowhere else, definitely not in config_example.py, because only the config.py is ignored by git!
 ---
 
 ## How to run
