@@ -214,10 +214,13 @@ def append_result(
     with path.open("a", encoding="utf-8") as fh:
         fh.write("\n\nSummary:\n")
         total_rounded_hours = 0.0
+        total_redmine_reports = 0
         for task, values in grouped_tasks.items():
             # accumulate only real tasks (not special '#'-prefixed groups)
             if not task.startswith("#"):
                 total_rounded_hours += float(values.get("rounded_hours", 0))
+                if values.get("task_id"):
+                    total_redmine_reports += 1
             joined_desc = ", ".join(sorted(values.get("desc", [])))
 
             if not task.startswith("#"):
@@ -267,6 +270,8 @@ def append_result(
             f"({total_delta_free_mins})\n",
         )
         fh.write(f"saldo: {sign}{saldo_hours}h {saldo_rest}m ({sign}{saldo_mins})\n")
+        fh.write(f"total redmine reports: {total_redmine_reports}\n")
+
         if saldo_mins == 0:
             fh.write("working šul-nul\n")
         elif sign == "":
