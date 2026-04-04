@@ -358,11 +358,11 @@ def add_record(
     Creates the file and its parent directories if they do not exist yet.
     The timestamp is taken from *now* (defaults to the current local time).
     """
+    prepare_file(path)
     if now is None:
         now = datetime.now(LOG_TZ)
     time_str = now.strftime("%H:%M")
     line = f"{time_str} {text}"
-    path.parent.mkdir(parents=True, exist_ok=True)
     with path.open("a", encoding="utf-8") as fh:
         fh.write(f"{line}\n")
     logger.info("Added record: %s to %s", line, path)
