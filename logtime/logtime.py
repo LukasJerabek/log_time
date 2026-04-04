@@ -58,12 +58,6 @@ def parse_args() -> argparse.Namespace:
     subparsers = parser.add_subparsers(dest="command")
     add_parser = subparsers.add_parser("add", help="Add a timestamped record to today's log file")
     add_parser.add_argument("text", nargs="+", help="Description text for the record")
-    add_parser.add_argument(
-        "--task-id",
-        type=str,
-        default=None,
-        help="Optional Redmine task ID to associate with the record",
-    )
 
     return parser.parse_args()
 
@@ -368,7 +362,7 @@ def main() -> None:
         days_back = int(args.days_back)
         today = datetime.now(LOG_TZ) - timedelta(days=days_back)
         path = get_path(today=today)
-        add_record(path, " ".join(args.text), task_id=args.task_id)
+        add_record(path, " ".join(args.text))
         return
 
     days_back = int(args.days_back)
