@@ -372,23 +372,17 @@ def main() -> None:
     logging.basicConfig(level=logging.INFO)
     args = parse_args()
 
+    days_back = int(args.days_back)
+    today = datetime.now(LOG_TZ) - timedelta(days=days_back)
+    path = get_path(today=today)
+
     if args.command == "prepare":
-        days_back = int(args.days_back)
-        today = datetime.now(LOG_TZ) - timedelta(days=days_back)
-        path = get_path(today=today)
         prepare_file(path)
         return
 
     if args.command == "add":
-        days_back = int(args.days_back)
-        today = datetime.now(LOG_TZ) - timedelta(days=days_back)
-        path = get_path(today=today)
         add_record(path, " ".join(args.text))
         return
-
-    days_back = int(args.days_back)
-    today = datetime.now(LOG_TZ) - timedelta(days=days_back)
-    path = get_path(today=today)
 
     lines = get_lines(path)
     if is_already_parsed(lines):
