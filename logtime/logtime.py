@@ -54,6 +54,11 @@ class TaskResult:
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description="Process logtime arguments")
     parser.add_argument("--days-back", type=int, help="Number of days to go back", default=0)
+
+    subparsers = parser.add_subparsers(dest="command")
+    add_parser = subparsers.add_parser("add", help="Add a timestamped record to today's log file")
+    add_parser.add_argument("text", nargs="+", help="Description text for the record")
+
     return parser.parse_args()
 
 
@@ -328,9 +333,37 @@ def send_time_entries(grouped_tasks: Grouped, redmine_client: Redmine, date: dat
             )
 
 
+def add_record(
+    path: Path,
+    text: str,
+    now: datetime | None = None,
+) -> None:
+    """Append a timestamped record line to the log file at *path*.
+
+    Creates the file and its parent directories if they do not exist yet.
+    The timestamp is taken from *now* (defaults to the current local time).
+    """
+    if now is None:
+        now = datetime.now(LOG_TZ)
+    time_str = now.strftime("%H:%M")
+    line = f"{time_str} {text}"
+    path.parent.mkdir(parents=True, exist_ok=True)
+    with path.open("a", encoding="utf-8") as fh:
+        fh.write(f"{line}\n")
+    logger.info("Added record: %s to %s", line, path)
+
+
 def main() -> None:
     logging.basicConfig(level=logging.INFO)
     args = parse_args()
+
+    if args.command == "add":
+        days_back = int(args.days_back)
+        today = datetime.now(LOG_TZ) - timedelta(days=days_back)
+        path = get_path(today=today)
+        add_record(path, " ".join(args.text))
+        return
+
     days_back = int(args.days_back)
     today = datetime.now(LOG_TZ) - timedelta(days=days_back)
     path = get_path(today=today)
