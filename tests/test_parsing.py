@@ -3,8 +3,8 @@ from datetime import datetime, timedelta
 from pathlib import Path
 
 import pytest
-import logtime.logtime as lt
 
+import logtime.logtime as lt
 
 # ---------------------------------------------------------------------------
 # parse_line
