@@ -1,0 +1,16 @@
+# Redmine API key - can also be set via LOGTIME_REDMINE_API_KEY env var
+api_key: null
+# Redmine instance URL - can also be set via LOGTIME_REDMINE_URL env var
+redmine_url: null
+root_folder: ~/logtime
+defaults:
+  sync: "77549"
+  organization: "77549"
+  standup: "77488"
+  refinement: "77548"
+  review: "77489"
+  retro: "77489"
+  planning: "77491"
+  shift: "77928"
+  support: "77928"
+  monitoring: "77546"
