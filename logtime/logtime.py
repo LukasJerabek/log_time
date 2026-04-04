@@ -1,31 +1,33 @@
 import argparse
 import json
 import logging
+import os
 import re
 from collections.abc import Iterable
 from dataclasses import dataclass
 from datetime import datetime, timedelta
 from itertools import pairwise
 from pathlib import Path
-from typing import Any
+from typing import Any, cast
 from zoneinfo import ZoneInfo
 
+import yaml
 from redminelib import Redmine  # type: ignore[import-untyped]
 
-try:
-    from logtime.config import (  # type: ignore[import-untyped]
-        api_key,
-        defaults,
-        redmine_url,
-        root_folder,
-    )
-except ModuleNotFoundError:
-    from logtime.config_example import (
-        api_key,
-        defaults,
-        redmine_url,
-        root_folder,
-    )
+
+def _load_config() -> dict[str, Any]:
+    config_path = Path(__file__).parent / "config.yaml"
+    fallback_path = Path(__file__).parent / "config_example.yaml"
+    path = config_path if config_path.exists() else fallback_path
+    with path.open(encoding="utf-8") as fh:
+        return cast(dict[str, Any], yaml.safe_load(fh))
+
+
+_cfg = _load_config()
+api_key: str | None = os.environ.get("LOGTIME_REDMINE_API_KEY") or _cfg.get("api_key") or None
+redmine_url: str = os.environ.get("LOGTIME_REDMINE_URL") or _cfg.get("redmine_url", "")
+root_folder: str = _cfg.get("root_folder", "~/logtime")
+defaults: dict[str, str] = _cfg.get("defaults", {})
 
 
 LOG_TZ = ZoneInfo("Europe/Prague")

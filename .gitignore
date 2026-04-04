@@ -12,3 +12,4 @@ wheels/
 secrets.py
 uv.lock
 logtime/config.py
+logtime/config.yaml
