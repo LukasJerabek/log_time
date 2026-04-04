@@ -457,6 +457,13 @@ def test_add_record_appends_to_existing(tmp_path: Path) -> None:
     assert lines[1] == "14:30 Another task"
 
 
+def test_add_record_with_task_id_in_text(tmp_path: Path) -> None:
+    log_file = tmp_path / "log.md"
+    now = datetime(2026, 4, 4, 9, 15, tzinfo=lt.LOG_TZ)
+    lt.add_record(log_file, "12345 Meeting", now=now)
+    assert log_file.read_text(encoding="utf-8") == "09:15 12345 Meeting\n"
+
+
 def test_add_record_creates_parent_dirs(tmp_path: Path) -> None:
     log_file = tmp_path / "deep" / "nested" / "dir" / "log.md"
     now = datetime(2026, 4, 4, 10, 0, tzinfo=lt.LOG_TZ)
@@ -470,4 +477,3 @@ def test_add_record_plain_text(tmp_path: Path) -> None:
     lt.add_record(log_file, "No task", now=now)
     content = log_file.read_text(encoding="utf-8")
     assert content == "11:45 No task\n"
-    assert "None" not in content
