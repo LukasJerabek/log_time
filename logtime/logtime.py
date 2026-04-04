@@ -59,6 +59,8 @@ def parse_args() -> argparse.Namespace:
     add_parser = subparsers.add_parser("add", help="Add a timestamped record to today's log file")
     add_parser.add_argument("text", nargs="+", help="Description text for the record")
 
+    subparsers.add_parser("prepare", help="Create today's log file and directory structure")
+
     return parser.parse_args()
 
 
@@ -333,6 +335,19 @@ def send_time_entries(grouped_tasks: Grouped, redmine_client: Redmine, date: dat
             )
 
 
+def prepare_file(path: Path) -> None:
+    """Create the log file and its parent directories if they do not exist yet.
+
+    Does nothing when the file already exists.
+    """
+    if path.exists():
+        logger.info("Log file already exists: %s", path)
+        return
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.touch()
+    logger.info("Created log file: %s", path)
+
+
 def add_record(
     path: Path,
     text: str,
@@ -356,6 +371,13 @@ def add_record(
 def main() -> None:
     logging.basicConfig(level=logging.INFO)
     args = parse_args()
+
+    if args.command == "prepare":
+        days_back = int(args.days_back)
+        today = datetime.now(LOG_TZ) - timedelta(days=days_back)
+        path = get_path(today=today)
+        prepare_file(path)
+        return
 
     if args.command == "add":
         days_back = int(args.days_back)
