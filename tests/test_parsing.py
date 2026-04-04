@@ -477,3 +477,35 @@ def test_add_record_plain_text(tmp_path: Path) -> None:
     lt.add_record(log_file, "No task", now=now)
     content = log_file.read_text(encoding="utf-8")
     assert content == "11:45 No task\n"
+
+
+# ---------------------------------------------------------------------------
+# prepare_file
+# ---------------------------------------------------------------------------
+
+
+def test_prepare_file_creates_file(tmp_path: Path) -> None:
+    log_file = tmp_path / "2026" / "04" / "2026-04-04 SA.md"
+    lt.prepare_file(log_file)
+    assert log_file.exists()
+    assert log_file.read_text(encoding="utf-8") == ""
+
+
+def test_prepare_file_creates_parent_dirs(tmp_path: Path) -> None:
+    log_file = tmp_path / "deep" / "nested" / "dir" / "log.md"
+    lt.prepare_file(log_file)
+    assert log_file.exists()
+
+
+def test_prepare_file_does_not_overwrite_existing(tmp_path: Path) -> None:
+    log_file = tmp_path / "log.md"
+    log_file.write_text("08:00 Start\n", encoding="utf-8")
+    lt.prepare_file(log_file)
+    assert log_file.read_text(encoding="utf-8") == "08:00 Start\n"
+
+
+def test_prepare_file_idempotent(tmp_path: Path) -> None:
+    log_file = tmp_path / "log.md"
+    lt.prepare_file(log_file)
+    lt.prepare_file(log_file)
+    assert log_file.exists()
