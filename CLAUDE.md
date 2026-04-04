@@ -4,7 +4,7 @@
 - Assistants may make edits to help maintain and develop this Hugo site.
 
 ## Scope
-- Not allowed: modify `.git/config`, push commits or create PRs, add or change secrets.
+- Not allowed: modify `.git/config`, merge branches to master, add or change secrets.
 - Completely ignore hugo_site/content folder, never search index or anything.
 
 ## Behavior rules
