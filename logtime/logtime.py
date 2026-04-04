@@ -336,7 +336,6 @@ def send_time_entries(grouped_tasks: Grouped, redmine_client: Redmine, date: dat
 def add_record(
     path: Path,
     text: str,
-    task_id: str | None = None,
     now: datetime | None = None,
 ) -> None:
     """Append a timestamped record line to the log file at *path*.
@@ -347,7 +346,7 @@ def add_record(
     if now is None:
         now = datetime.now(LOG_TZ)
     time_str = now.strftime("%H:%M")
-    line = f"{time_str} {task_id} {text}" if task_id else f"{time_str} {text}"
+    line = f"{time_str} {text}"
     path.parent.mkdir(parents=True, exist_ok=True)
     with path.open("a", encoding="utf-8") as fh:
         fh.write(f"{line}\n")
