@@ -94,7 +94,7 @@ or for todays daily file rely on default 0 \
 It is recommended to create some alias to run logtime for example in you .bashrc/.zshrc/...:
 ```
 logtime() {
-  pushd ~/Projects/log_time/ || return
+  pushd ~/Projects/logtime/ || return
 
   local days_back=""
 
