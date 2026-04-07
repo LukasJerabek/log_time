@@ -7,11 +7,11 @@ Calculates statistics from timestamps and optionally sends them to Redmine api.
 
 ## How It Works
 
-1. You prepare your daily file to track timestamps, where DAYOFWEEK is any of MO,TU,WE,TH,FR,SA,SU.
-`root_folder/YYYY/MM/YYYY-MM-DD {DAYOFWEEK}.md`
+1. Normally you would prepare your daily file to track timestamps, where DAYOFWEEK is any of MO,TU,WE,TH,FR,SA,SU. \
+`root_folder/YYYY/MM/YYYY-MM-DD {DAYOFWEEK}.md` \
+After your directory structure is prepared you can actually create new daily files with just the prepare command explained below.
 
-2. After that you can start filling in the timestamps with optional task id and optional description.
-Like this:
+2. Then you would start filling in the timestamps with optional task id and optional description similar to this:
 ```
 08:00 12345 Same description will be tracked together in statistics, and reported together in redmine.
 08:30 12345 differing description will be tracked separately in statistics, also reported to redmine separately.
@@ -23,15 +23,16 @@ Like this:
 10:30 45678
 11:00 # end, this was a short day
 ```
-Records with only task id still work, but redmine report won't have any text.
+Records with only task id still work, but redmine report won't have any text.\
+You can also make use of add command explained below.
 
-4. Make a copy of logtime/config_example.py and name it logtime/config.py.
+4. Make a copy of logtime/config_example.yaml and name it logtime/config.yaml.
 
-5. Don't forget to check out your logtime/config.py.
+5. Don't forget to check out your logtime/config.yaml.
 - set your root_folder path of the daily files.
-- Optionally adjust defaults dict, that serves as a dictionary of texts, that you want to exchange for task id, so that you won't have to remember all the ids that you use regularly.
+- Optionally adjust defaults dict, that serves as a dictionary of texts, that you want to exchange for task id, so that you wouldn't have to remember all the ids that you use regularly.
 
-5. After you run logtime it will:
+5. After you would run logtime it will:
    * Read timestamps and descriptions
    * Compute deltas between entries
    * Group by task and description
@@ -45,7 +46,7 @@ Summary:
 30 = 0h 30m ~ 0.5h: 12345 differing description will be tracked separately in statistics, also reported to redmine statistics separately.
 80 = 1h 20m ~ 1.25h: 45678
 10 = 0h 10m ~ 0.25h: This will appear as work activity in statistics, but without task id can't be reported to redmine api.
-10 = 0h 10m ~ 0.25h: 77549 organization  # notice this has been updated with task id from defaults in logtime/config.py
+10 = 0h 10m ~ 0.25h: 77549 organization  # notice this has been updated with task id from defaults in logtime/config.yaml
 10 = 0h 10m ~ 0.25h: # lunch, hashtag marks nonworking activity
 
 total: 3h 0m (180)
@@ -53,36 +54,79 @@ total work: 2h 50m (170)
 total work rounded hours: 3.0
 total free:  0h 10m (10)
 saldo: -5h 0m (-300)
-working too little
+working too little  # this assumes 8 hours shifts
 already parsed
 ```
 
 7. Finally you will be prompted with
 `Send on api? (y/n):`
 For redmine report to work, you also need to set environment variables LOGTIME_REDMINE_API_KEY and LOGTIME_REDMINE_URL first.
-Alternatively you can put values directly in your config.py, but nowhere else, definitely not in config_example.py, because only the config.py is ignored by git!
+Alternatively you can put values directly in your config.yaml, but nowhere else, definitely not in config_example.yaml, because only the config.yaml is ignored by git!
 ---
 
 ## How to run
 
-- Clone this repo anywhere you want
+- Clone this repo anywhere you want \
 `git clone https://github.com/LukasJerabek/logtime.git`
-- Enter repo
+- Enter repo \
 `cd logtime`
 - Read through the above "How It Works" section and do the necessary preparation.
-- After preparation run logtime preferably with uv:
-`uv run logtime --days-back <number>`
+- After preparation run logtime preferably with uv: \
+`uv run logtime --days-back <number>` \
+or just \
+`uv run logtime <number>` \
+or for todays daily file rely on default 0 \
+`uv run logtime` \
 --days-back parameter lets you compute files older than today.
+- You can prepare daily file by running \
+`uv run logtime --days-back <number> prepare` \
+or just \
+`uv run logtime <number> prepare` \
+or for todays daily file rely on default 0 \
+`uv run logtime prepare`
+- You can add record to your daily file by running \
+`uv run logtime --days-back <number> add 77887 initial consultation with tech lead` \
+or just \
+`uv run logtime <number> add 77887 initial consultation with tech lead` \
+or for todays daily file rely on default 0 \
+`uv run logtime add 77887 initial consultation with tech lead` \
 
 It is recommended to create some alias to run logtime for example in you .bashrc/.zshrc/...:
 ```
 logtime() {
-  pushd <where you cloned there repo>/logtime/ || return
-  uv run logtime --days-back "$@"
+  pushd ~/Projects/log_time/ || return
+
+  local days_back=""
+
+  # If the first argument is --days-back
+  if [[ "$1" == "--days-back" ]]; then
+    days_back="--days-back $2"
+    shift 2
+  # If the first argument is a number
+  elif [[ "$1" =~ '^[0-9]+$' ]]; then
+    days_back="--days-back $1"
+    shift
+  fi
+
+  # Now $@ is the subcommand + arguments
+  echo $days_back
+  echo $@
+  uv run logtime $days_back "$@"
+
   popd
 }
 ```
-After that you can just call `logtime <number>` from anywhere.
+
+After that you can just call these simpler commands from anywhere in your shell. Don't forget to reload the shell before trying.
+
+| Command                         | Runs as                                |
+| ------------------------------- | -------------------------------------- |
+| `logtime 2`                     | `uv run logtime --days-back 2`         |
+| `logtime prepare`               | `uv run logtime prepare`               |
+| `logtime add asdf`              | `uv run logtime add asdf`              |
+| `logtime 2 prepare`             | `uv run logtime --days-back 2 prepare` |
+| `logtime --days-back 3 add foo` | `uv run logtime --days-back 3 add foo` |
+
 
 ---
 
