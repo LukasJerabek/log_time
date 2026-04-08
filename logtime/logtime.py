@@ -363,9 +363,18 @@ def add_record(
         now = datetime.now(LOG_TZ)
     time_str = now.strftime("%H:%M")
     line = f"{time_str} {text}"
-    with path.open("a", encoding="utf-8") as fh:
-        fh.write(f"{line}\n")
-    logger.info("Added record: %s to %s", line, path)
+
+    with path.open("r", encoding="utf-8") as fh:
+        content = fh.read()
+
+    content = content.rstrip()
+    if content:
+        content += "\n"
+
+    with path.open("w", encoding="utf-8") as fh:
+        fh.write(content + line)
+
+    logger.info("Added record: %s to %s", line.rstrip(), path)
 
 
 def main() -> None:
