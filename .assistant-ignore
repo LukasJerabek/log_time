@@ -1,5 +1,3 @@
 # Assistant ignore list
 # Paths listed below SHOULD NOT be inspected by the assistant for this workspace.
 # This is a social/contract mechanism and is honored by the assistant in this session.
-
-hugo_site/content/
