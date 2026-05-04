@@ -100,7 +100,7 @@ You can also make use of add command explained below.
 - set your root_folder path of the daily files.
 - Optionally adjust defaults dict, that serves as a dictionary of texts, that you want to exchange for task id at computation time, so that you wouldn't have to remember all the ids that you use regularly.
 
-5. After you would run logtime it will:
+5. After you running the logtime it would:
    * Read timestamps and descriptions
    * Compute deltas between entries
    * Group by task and description
